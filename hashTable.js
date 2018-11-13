@@ -1,3 +1,7 @@
+/**
+ * 散列表
+ * 以下方法会出现数据覆盖的问题
+ */
 function HashTable() {
   var table = [];
 

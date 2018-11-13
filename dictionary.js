@@ -1,3 +1,7 @@
+/**
+ * 字典
+ * 
+ */
 function Dictionary() {
   var items = {};
 
