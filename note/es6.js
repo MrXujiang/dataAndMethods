@@ -29,3 +29,14 @@
   output += literals[index]
   return output;
 }
+
+/**
+ * 正则扩展
+ */
+ u 修饰符 --用来正确处理大于\uFFFF的 Unicode 字符
+
+// 1.返回字符串长度的方法
+ function codePointLength(text) {
+  var result = text.match(/[\s\S]/gu);
+  return result ? result.length : 0;
+}
