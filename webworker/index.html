@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Web Worker</title>
+</head>
+<body>
+  <div class="mes-wrap">
+    <div class="tit">Web Worker</div>
+    <div class="content">
+
+    </div>
+  </div>
+  <script>
+    // 检测浏览器是否支持web worker
+    if(typeof(Worker)!=="undefined") {
+      // 如果worker未定义，则创建一个worker对象
+      if(typeof(w)=="undefined"){
+        var w=new Worker("worker.js");
+      }
+      // 向web worker添加一个事件监听
+      w.onmessage=function(event){
+        // document.getElementById("result").innerHTML=event.data;
+        console.log(event.data)
+        // 向web worker发送信息
+        this.postMessage('html发送了信息');
+      };
+      // 终止worker,并释放浏览器资源
+      // w.terminate();
+    } else {
+      console.log('该浏览器不支持web worker')
+    }
+  </script>
+</body>
+</html>

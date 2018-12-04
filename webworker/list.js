@@ -1,0 +1,1 @@
+let list = ['one', 'two', 'three'];
