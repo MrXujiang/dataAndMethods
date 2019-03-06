@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>canvas</title>
+  <style>
+    html,body {
+      margin: 0;
+      height: 100%;
+      /* overflow: hidden; */
+    }
+    .demo {
+      box-sizing: border-box;
+    }
+    #can {
+      box-sizing: border-box;
+      border: 1px solid #000;
+    }
+    #v_code {
+      margin-top: 20px;
+      border: 1px solid #000;
+      cursor: pointer;
+    }
+    #v_translate {
+      margin-top: 20px;
+      border: 1px solid red;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo">
+    <canvas id="can">您的浏览器不支持canvas,请更新浏览器</canvas>
+    <canvas id="v_code"></canvas>
+    <canvas id="v_translate"></canvas>
+  </div>
+  <script>
+
+    (function(){
+      var context = document.getElementById('can');
+      // 设置canvas宽高
+      context.width = window.innerWidth/2;
+      context.height = window.innerHeight/2;
+      if(context.getContext) {
+         var ctx = context.getContext('2d');
+
+         var img = new Image();
+         img.onload = function() {
+           var w = img.width,
+               h = img.height;
+           ctx.drawImage(img, 0,0, w/3,h/3, 20, 20, w/3, h/3)
+         }
+
+         img.src = 'http://images.wisegeek.com/coral-reef.jpg';
+
+          // 封装的一个用于绘制圆角矩形的函数.
+
+        function roundedRect(ctx,x,y,width,height,radius){
+          ctx.beginPath();
+          ctx.moveTo(x,y+radius);
+          ctx.lineTo(x,y+height-radius);
+          ctx.quadraticCurveTo(x,y+height,x+radius,y+height);
+          ctx.lineTo(x+width-radius,y+height);
+          ctx.quadraticCurveTo(x+width,y+height,x+width,y+height-radius);
+          ctx.lineTo(x+width,y+radius);
+          ctx.quadraticCurveTo(x+width,y,x+width-radius,y);
+          ctx.lineTo(x+radius,y);
+          ctx.quadraticCurveTo(x,y,x,y+radius);
+          ctx.stroke();
+        }
+      }else {
+        alert('浏览器版本过低，请升级浏览器！')
+      }
+    })();
+
+    // canvas验证码
+    (function(){
+      var code_wrap = $('v_code');
+      var ctx = code_wrap.getContext('2d');
+      code_wrap.addEventListener('click', function(){
+        draw();
+      }, false);
+      code_wrap.width = 200;
+      code_wrap.height = 60;
+      // 词源
+      var hashList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+          wordLen = 4,
+          maxW = 200,
+          maxH = 60;
+
+      console.log(maxW *Math.random(), maxH *Math.random());
+      draw();
+      function draw() {
+        var resultArr = [];
+
+        ctx.clearRect(0, 0, maxW, maxH)
+        for(var i=0; i< 8; i++) {
+          ctx.strokeStyle = 'rgb('  + Math.floor(36.4*i) + ',' + Math.floor(255-36.4*i) + ',' +
+                           Math.floor(255-36.4*i) + ')';
+          ctx.beginPath();
+          ctx.moveTo(parseInt(maxW *Math.random()), parseInt(maxH *Math.random()));
+          ctx.lineTo(parseInt(maxW *Math.random()), parseInt(maxH *Math.random()));
+          ctx.stroke();
+
+          ctx.font = "26px serif";
+          if(i%2 === 0){
+            var word = hashList[parseInt(hashList.length * Math.random())];
+            resultArr.push(word);
+            ctx.fillText(word, parseInt(148 *Math.random()), parseInt(maxH/2) + Math.pow(-1, i));
+          }
+        }
+
+        console.log(resultArr)
+      }
+    })()
+
+    ;(function(){
+      var code_wrap = $('v_translate');
+      var ctx = code_wrap.getContext('2d');
+      code_wrap.addEventListener('click', function(){
+        draw(3);
+      }, false);
+      code_wrap.width = 500;
+      code_wrap.height = 500;
+
+      var dx = 0;
+      var dy = 0;
+
+      function draw(type) {
+        if(type === 1){
+          dx += 35;
+          if(dx > 250){
+            dy += 35;
+            dx = 0;
+          }
+          ctx.save();
+          ctx.fillStyle = 'red';
+          ctx.translate(dx, dy);
+
+          ctx.fillRect(0,0, 25,25);
+          ctx.restore();
+        } else if(type === 2) {
+          ctx.translate(105,105);
+
+          for (var i=1;i<2;i++){ // Loop through rings (from inside to out)
+          // var i=1;
+            ctx.save();
+            ctx.fillStyle = 'rgb('+(51*i)+','+(255-51*i)+',255)';
+
+            for (var j=0;j<i*6;j++){ // draw individual dots
+              ctx.rotate(Math.PI*2/6/i);
+              ctx.beginPath();
+              ctx.arc(0,i*12.5,5,0,Math.PI*2,true);
+              ctx.fill();
+            }
+
+            ctx.restore();
+          }
+
+        }else if(type === 3) {
+          ctx.translate(50,50);
+
+          ctx.save();
+
+          // ctx.scale(0.5, 1);
+          ctx.transform(0.1, 0, 0, 0.8, 0, 0);
+          console.log(1);
+          ctx.fillStyle = 'rgb(41,214,255)';
+          // ctx.rotate(Math.PI*2/6);
+          // ctx.beginPath();
+          ctx.fillRect(50,50, 100, 100);
+          // ctx.arc(0,12.5,5,0,Math.PI*2,true);
+          ctx.fill();
+
+          ctx.setTransform(-1, 0, 0, 1, 100, 100);
+          ctx.fillStyle = "rgba(255, 128, 255, 0.5)";
+          ctx.fillRect(0, 50, 100, 100);
+
+          ctx.restore()
+
+        }
+      }
+    })()
+
+    function $(id) {
+      return document.getElementById(id)
+    }
+  </script>
+</body>
+</html>
